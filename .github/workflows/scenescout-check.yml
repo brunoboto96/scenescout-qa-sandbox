@@ -1,0 +1,65 @@
+# A deterministic `scenescout check` of a deployed preview: it visits the pages,
+# measures what loads (HTTP and page errors, failed requests shown as empty
+# results, layout, contrast, names) and fails when it finds anything high
+# severity. Mode observe: it sends the preview nothing but page loads and GETs.
+# No model and no secrets.
+#
+# How it starts:
+# - workflow_call: deploy-preview.yml calls it right after recording a pull
+#   request's preview, with that preview's URL, so the result is a check on the
+#   pull request. This is the path that runs here: a deployment the deploy
+#   workflow records with GITHUB_TOKEN raises no deployment_status run.
+# - deployment_status: a successful deployment to the "preview" environment made
+#   by an app or a personal token (a Pages or Vercel integration, say).
+# - workflow_dispatch: check any URL by hand.
+name: scenescout-check
+
+on:
+  workflow_call:
+    inputs:
+      url:
+        description: The preview to check.
+        required: true
+        type: string
+  deployment_status:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: The URL to check, e.g. https://<branch>.scenescout-sandbox-qa.pages.dev
+        required: true
+        type: string
+
+permissions: {}
+
+jobs:
+  check:
+    if: >-
+      github.event_name != 'deployment_status' ||
+      (github.event.deployment_status.state == 'success' && github.event.deployment_status.environment == 'preview')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      security-events: write # upload the SARIF to code scanning
+    steps:
+      # Fails this step when the gate fails (an issue at high severity or worse,
+      # or a re-tested high finding that still reproduces) or the check could not
+      # run. The report is on the job summary and kept as an artifact either way.
+      - id: check
+        uses: brunoboto96/SceneScout@9eb7180209c494cd3da4968bc207d9b1c14cb3de # v3.14.1
+        with:
+          url: ${{ inputs.url || github.event.deployment_status.environment_url }}
+          mode: observe
+          artifact-name: scenescout-check
+
+      # Runs after a failed gate too. Skipped for a manual run, whose URL need not
+      # belong to the branch it was started from, and when there is no full ref
+      # (a deployment made for a bare commit), which code scanning would refuse.
+      - name: Upload to code scanning
+        if: >-
+          always() && steps.check.outputs.sarif != '' &&
+          github.event_name != 'workflow_dispatch' && startsWith(github.ref, 'refs/')
+        uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+        with:
+          sarif_file: ${{ steps.check.outputs.sarif }}
+          category: scenescout-check

@@ -72,3 +72,14 @@ jobs:
           jq -n --arg url "$URL" '{state: "success", environment_url: $url, auto_inactive: true}' \
             | gh api -X POST "repos/$REPO/deployments/$id/statuses" --input - > /dev/null
           echo "Recorded deployment $id for $SHA at $URL"
+
+  # The deterministic gate on the preview just recorded. Called rather than left to
+  # deployment_status: a deployment recorded with GITHUB_TOKEN starts no workflow.
+  check:
+    needs: [deploy, record]
+    permissions:
+      contents: read
+      security-events: write
+    uses: ./.github/workflows/scenescout-check.yml
+    with:
+      url: ${{ needs.deploy.outputs.url }}
