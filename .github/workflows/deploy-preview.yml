@@ -73,10 +73,16 @@ jobs:
             | gh api -X POST "repos/$REPO/deployments/$id/statuses" --input - > /dev/null
           echo "Recorded deployment $id for $SHA at $URL"
 
-  # The deterministic gate on the preview just recorded. Called rather than left to
-  # deployment_status: a deployment recorded with GITHUB_TOKEN starts no workflow.
+  # The deterministic gate: on a pull request, the preview just recorded (called
+  # rather than left to deployment_status, since a deployment recorded with
+  # GITHUB_TOKEN starts no workflow); on a push to main, production, so code
+  # scanning has a main analysis to compare pull requests with.
   check:
     needs: [deploy, record]
+    # record is skipped on a push, so run on a push once deploy succeeded.
+    if: >-
+      always() && needs.deploy.result == 'success' &&
+      (github.event_name == 'push' || needs.record.result == 'success')
     permissions:
       contents: read
       security-events: write
