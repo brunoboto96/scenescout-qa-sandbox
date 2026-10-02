@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Items · Widget Desk</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="/" data-testid="nav-brand-link">Widget Desk</a>
+    <nav data-testid="nav-main">
+      <a href="/" data-testid="nav-home-link">Home</a>
+      <a href="/items" data-testid="nav-items-link">Items</a>
+      <a href="/archived" data-testid="nav-archived-link">Archived</a>
+      <a href="/form" data-testid="nav-form-link">New item</a>
+    </nav>
+  </header>
+  <main>
+    <h1 data-testid="items-title">Items</h1>
+    <p class="status" data-testid="items-status" role="status">Loading…</p>
+    <table data-testid="items-table">
+      <thead><tr><th>Name</th><th>Colour</th><th>Quantity</th></tr></thead>
+      <tbody data-testid="items-rows"></tbody>
+    </table>
+    <script>
+      (async () => {
+        const status = document.querySelector("[data-testid=items-status]");
+        const rows = document.querySelector("[data-testid=items-rows]");
+        try {
+          const res = await fetch("/api/items");
+          if (!res.ok) throw new Error("The server answered " + res.status);
+          const items = await res.json();
+          for (const it of items) {
+            const tr = document.createElement("tr");
+            tr.dataset.testid = "items-row-" + it.id;
+            for (const v of [it.name, it.colour, it.quantity]) {
+              const td = document.createElement("td");
+              td.textContent = String(v);
+              tr.append(td);
+            }
+            rows.append(tr);
+          }
+          status.textContent = items.length + " items";
+        } catch (err) {
+          status.textContent = "Could not load items: " + err.message;
+          status.classList.add("error");
+        }
+      })();
+    </script>
+  </main>
+</body>
+</html>

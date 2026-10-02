@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>New item · Widget Desk</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="/" data-testid="nav-brand-link">Widget Desk</a>
+    <nav data-testid="nav-main">
+      <a href="/" data-testid="nav-home-link">Home</a>
+      <a href="/items" data-testid="nav-items-link">Items</a>
+      <a href="/archived" data-testid="nav-archived-link">Archived</a>
+      <a href="/form" data-testid="nav-form-link">New item</a>
+    </nav>
+  </header>
+  <main>
+    <h1 data-testid="form-title">New item</h1>
+    <form id="item-form" data-testid="item-form" novalidate>
+      <label for="name">Name</label>
+      <input id="name" name="name" required data-testid="item-form-name-input">
+      <label for="colour">Colour</label>
+      <select id="colour" name="colour" data-testid="item-form-colour-select">
+        <option>Red</option><option>Green</option><option>Blue</option>
+      </select>
+      <label for="quantity">Quantity</label>
+      <input id="quantity" name="quantity" type="number" min="0" value="1" data-testid="item-form-quantity-input">
+      <div class="actions">
+        <button type="submit" class="btn btn-save" data-testid="item-form-save-button">Save</button>
+        <a href="/items" class="btn btn-cancel" data-testid="item-form-cancel-button">Cancel</a>
+      </div>
+      <p class="status" role="status" data-testid="item-form-status"></p>
+    </form>
+    <script>
+      document.getElementById("item-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const status = document.querySelector("[data-testid=item-form-status]");
+        const name = document.getElementById("name").value.trim();
+        if (!name) {
+          status.textContent = "Enter a name.";
+          status.className = "status error";
+          return;
+        }
+        status.textContent = "Saved " + name + " (this sandbox keeps nothing).";
+        status.className = "status ok";
+      });
+    </script>
+  </main>
+</body>
+</html>

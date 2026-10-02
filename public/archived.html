@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Archived · Widget Desk</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="/" data-testid="nav-brand-link">Widget Desk</a>
+    <nav data-testid="nav-main">
+      <a href="/" data-testid="nav-home-link">Home</a>
+      <a href="/items" data-testid="nav-items-link">Items</a>
+      <a href="/archived" data-testid="nav-archived-link">Archived</a>
+      <a href="/form" data-testid="nav-form-link">New item</a>
+    </nav>
+  </header>
+  <main>
+    <h1 data-testid="archived-title">Archived items</h1>
+    <table data-testid="archived-table">
+      <thead><tr><th>Name</th><th>Archived on</th></tr></thead>
+      <tbody data-testid="archived-rows"></tbody>
+    </table>
+    <script>
+      (async () => {
+        const rows = document.querySelector("[data-testid=archived-rows]");
+        let items = [];
+        try {
+          const res = await fetch("/api/archived");
+          items = res.ok ? await res.json() : [];
+        } catch {
+          items = [];
+        }
+        for (const it of items) {
+          const tr = document.createElement("tr");
+          tr.dataset.testid = "archived-row-" + it.id;
+          for (const v of [it.name, it.archivedOn]) {
+            const td = document.createElement("td");
+            td.textContent = String(v);
+            tr.append(td);
+          }
+          rows.append(tr);
+        }
+      })();
+    </script>
+  </main>
+</body>
+</html>

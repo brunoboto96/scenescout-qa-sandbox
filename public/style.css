@@ -1,0 +1,31 @@
+:root {
+  --bg: #f7f7f5;
+  --fg: #1d1d1b;
+  --muted: #5c5c58;
+  --line: #d9d9d4;
+  --save-bg: #1f6feb;
+  --save-fg: #ffffff;
+  --save-hover: #1858c4;
+  --error: #b42318;
+  --ok: #067647;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font: 16px/1.5 system-ui, sans-serif; background: var(--bg); color: var(--fg); }
+.top { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; padding: 0.75rem 1rem; border-bottom: 1px solid var(--line); background: #fff; }
+.brand { font-weight: 700; color: var(--fg); text-decoration: none; }
+nav { display: flex; flex-wrap: wrap; gap: 1rem; }
+nav a { color: var(--muted); }
+main { max-width: 42rem; margin: 0 auto; padding: 1.5rem 1rem; }
+.cards { padding-left: 1.2rem; }
+table { width: 100%; border-collapse: collapse; background: #fff; }
+th, td { text-align: left; padding: 0.5rem; border-bottom: 1px solid var(--line); }
+form { display: grid; gap: 0.4rem; }
+input, select { font: inherit; padding: 0.45rem; border: 1px solid var(--line); border-radius: 6px; }
+.actions { display: flex; gap: 0.75rem; margin-top: 0.75rem; }
+.btn { font: inherit; padding: 0.55rem 1.2rem; border-radius: 6px; cursor: pointer; text-decoration: none; }
+.btn-save { background: var(--save-bg); color: var(--save-fg); border: 1px solid var(--save-bg); font-weight: 600; }
+.btn-save:hover { background: var(--save-hover); border-color: var(--save-hover); }
+.btn-cancel { background: transparent; color: var(--fg); border: 1px solid var(--line); }
+.status { color: var(--muted); }
+.status.error { color: var(--error); }
+.status.ok { color: var(--ok); }
