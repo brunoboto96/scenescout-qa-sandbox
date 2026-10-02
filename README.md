@@ -65,6 +65,25 @@ apart from the release it is pinned to. Comment on a pull request:
 The `restyle-save` branch changes only the Save button's colours, so a pull
 request from it gives `compare` something to show.
 
+## The check gate
+
+`.github/workflows/scenescout-check.yml` runs `scenescout check` (SceneScout's
+GitHub Action, pinned to a release) against every pull request's preview, as
+the `check` job of deploy-preview once the preview is recorded. It is
+deterministic: no model, no secrets, and in `observe` mode it sends the preview
+nothing but page loads and GETs. It visits each page, measures what loads
+(failed requests, server errors, a failed request shown as an empty result,
+page errors, layout, contrast, unnamed controls) and fails the pull request's
+check when it finds anything at high severity, or when it could not run. The
+report is on the run's summary and kept as an artifact; on pull-request runs
+the SARIF also goes to code scanning under the category `scenescout-check`.
+
+The seeded defect fails it: `/archived` gets a 500 from `GET /api/archived` and
+shows an empty table. The workflow also runs on a `deployment_status` to the
+`preview` environment made by an app or a personal token (a deployment recorded
+with `GITHUB_TOKEN` starts no workflow), and by hand from the Actions tab with a
+URL.
+
 ## Configuration
 
 Names only; values are set in the repository settings, never in files.
