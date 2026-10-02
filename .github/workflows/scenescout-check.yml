@@ -7,8 +7,9 @@
 # How it starts:
 # - workflow_call: deploy-preview.yml calls it right after recording a pull
 #   request's preview, with that preview's URL, so the result is a check on the
-#   pull request. This is the path that runs here: a deployment the deploy
-#   workflow records with GITHUB_TOKEN raises no deployment_status run.
+#   pull request, and after each push to main, with production's URL, so code
+#   scanning has a main analysis. This is the path that runs here: a deployment
+#   the deploy workflow records with GITHUB_TOKEN raises no deployment_status run.
 # - deployment_status: a successful deployment to the "preview" environment made
 #   by an app or a personal token (a Pages or Vercel integration, say).
 # - workflow_dispatch: check any URL by hand.
