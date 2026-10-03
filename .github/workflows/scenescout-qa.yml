@@ -50,7 +50,7 @@ jobs:
       base: ${{ steps.gate.outputs.base }}
     steps:
       - id: gate
-        uses: brunoboto96/SceneScout/qa@v3.16.0
+        uses: brunoboto96/SceneScout/qa@v3.18.0
         with:
           stage: gate
           allowed: ${{ vars.SCENESCOUT_QA_ALLOWED }}
@@ -78,7 +78,7 @@ jobs:
       group: scenescout-qa-${{ github.repository }}-${{ needs.gate.outputs.pr }}
       cancel-in-progress: true
     steps:
-      - uses: brunoboto96/SceneScout/ci@v3.16.0
+      - uses: brunoboto96/SceneScout/ci@v3.18.0
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         with:
@@ -109,7 +109,7 @@ jobs:
       pushed: ${{ steps.shots.outputs.pushed }}
     steps:
       - id: shots
-        uses: brunoboto96/SceneScout/qa@v3.16.0
+        uses: brunoboto96/SceneScout/qa@v3.18.0
         with:
           stage: shots
           artifact-name: scenescout-qa-${{ needs.gate.outputs.pr }}
@@ -124,7 +124,7 @@ jobs:
       pull-requests: write # post the reply
       actions: read # link the run's artifact, and look for a newer run on the same pull request
     steps:
-      - uses: brunoboto96/SceneScout/qa@v3.16.0
+      - uses: brunoboto96/SceneScout/qa@v3.18.0
         with:
           stage: report
           result: ${{ needs.qa.result }}
