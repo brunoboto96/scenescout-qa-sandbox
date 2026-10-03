@@ -47,7 +47,7 @@ jobs:
       # or a re-tested high finding that still reproduces) or the check could not
       # run. The report is on the job summary and kept as an artifact either way.
       - id: check
-        uses: brunoboto96/SceneScout@9c5806628e9349955abbd759e9e930ba36052868 # v3.16.0
+        uses: brunoboto96/SceneScout@c00d74b3230d43f8d34df9867512ae27d3d9c42a # v3.18.0
         with:
           url: ${{ inputs.url || github.event.deployment_status.environment_url }}
           mode: observe
